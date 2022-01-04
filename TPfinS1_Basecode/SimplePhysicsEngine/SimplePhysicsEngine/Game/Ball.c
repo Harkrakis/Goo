@@ -94,14 +94,15 @@ void Ball_UpdateVelocity(Ball *ball, float timeStep)
 
 void Ball_UpdatePosition(Ball *ball, float timeStep)
 {
-    Vec2 acc,ressort,I;
-    float l;
-    ressort = origin;
-    I=Vec2_Normalize( Vec2_Sub ( ressort , ball->position ));
-    l=Vec2_Distance(ball->position , ressort);
-    acc.x=( (-1*ball->friction*ball->velocity.x) + (200*(l-l0)*I.x))/ball->mass;
-    acc.y=( (ball->mass*-9.81) + (-1*ball->friction*ball->velocity.y) + (200*(l-l0)*I.y))/ball->mass;
-    ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep));
+    if(ball->position.y+timeStep*ball->velocity.y>=0)
+	{
+    	ball->position=Vec2_Add(ball->position,Vec2_Scale(ball->velocity, timeStep));
+	}
+    else 
+    {
+    	ball->position.x+=timeStep*ball->velocity.x;
+    	ball->velocity.y=-0.9*ball->velocity.y;
+    }
 }
 
 void Ball_Render(Ball *ball, Scene *scene)
