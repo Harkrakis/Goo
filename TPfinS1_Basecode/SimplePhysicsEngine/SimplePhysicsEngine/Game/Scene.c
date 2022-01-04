@@ -1,4 +1,4 @@
-﻿#include "Scene.h"
+#include "Scene.h"
 #include "Ball.h"
 #include "Camera.h"
 #include "Background.h"
@@ -178,7 +178,7 @@ Ball *Scene_GetBalls(Scene *scene)
 
 BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
 {
-    int ballCount = Scene_GetBallCount(scene);
+    int ballCount = Scene_GetBallCount(scene),ID;
     Ball *balls = Scene_GetBalls(scene);
     BallQuery query = { 0 };
 
@@ -188,7 +188,6 @@ BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
 		{
 			query.distance = Vec2_Distance(position,balls[0].position);
 			query.ball = &balls[0];
-		}
     for(int i=1;i<ballCount;i++)
     {
     	if(Vec2_Distance(position,balls[i].position)<query.distance)
@@ -196,6 +195,7 @@ BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
     		query.distance = Vec2_Distance(position,balls[i].position);
     		query.ball = &balls[i];
     	}
+	  }
 	  }
     return query;
 }
@@ -206,7 +206,6 @@ int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int q
     //Ball *balls = Scene_GetBalls(scene);
 
     // TODO - Complétez la fonction
-	//Créez un tableau à n élements, parcourir le tableau des balles, remplir le tableau par ordre croissant, si valeur plus petite ajouter puis trier tableau
 
     return EXIT_SUCCESS;
 }
@@ -228,6 +227,7 @@ void Scene_FixedUpdate(Scene *scene, float timeStep)
 
 void Scene_UpdateGame(Scene *scene)
 {
+		BallQuery query;
     Input *input = Scene_GetInput(scene);
     Camera *camera = Scene_GetCamera(scene);
 
@@ -254,7 +254,12 @@ void Scene_UpdateGame(Scene *scene)
         return;
     }
 
-    // TODO
+		if(input->mouseLPressed==true)
+		{
+				Ball *ball4 = Scene_CreateBall(scene, Scene_GetMousePosition(scene));
+				query = Scene_GetNearestBall(scene,ball4->position);
+				Ball_Connect(query.ball, ball4, 1.5f);
+		}
     // Ajoutez ou supprimez des balles en fonction des actions du joueur
 }
 
