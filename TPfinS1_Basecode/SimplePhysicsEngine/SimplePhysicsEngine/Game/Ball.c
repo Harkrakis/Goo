@@ -78,10 +78,18 @@ Vec2 Ball_GetPosition(Ball *ball)
 
 void Ball_UpdateVelocity(Ball *ball, float timeStep)
 {
-    Vec2 acc;
-	acc.x=((-1*ball->friction*ball->velocity.x))/ball->mass;
-	acc.y=( (ball->mass*-9.81) + (-1*ball->friction*ball->velocity.y) )/ball->mass;
-	ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep));
+    Vec2 acc,I;
+    float l,Fx=0,Fy=0;
+    int j;
+    for(j=0;j<ball->springCount;j++)
+    { 
+		I=Vec2_Normalize( Vec2_Sub ( ball->springs[j].other->position, ball->position ));    
+    	Fx += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.x;
+    	Fy += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.y;
+    }
+    acc.x=( (-1*ball->friction*ball->velocity.x) + Fx)/ball->mass;
+    acc.y=( (ball->mass*-9.81) + (-1*ball->friction*ball->velocity.y) + Fy)/ball->mass;
+    ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep)); 
 }
 
 void Ball_UpdatePosition(Ball *ball, float timeStep)
@@ -91,9 +99,9 @@ void Ball_UpdatePosition(Ball *ball, float timeStep)
     ressort = origin;
     I=Vec2_Normalize( Vec2_Sub ( ressort , ball->position ));
     l=Vec2_Distance(ball->position , ressort);
-	acc.x=( (-1*ball->friction*ball->velocity.x) + (200*(l-l0)*I.x))/ball->mass;
-	acc.y=( (ball->mass*-9.81) + (-1*ball->friction*ball->velocity.y) + (200*(l-l0)*I.y))/ball->mass;
-	ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep));
+    acc.x=( (-1*ball->friction*ball->velocity.x) + (200*(l-l0)*I.x))/ball->mass;
+    acc.y=( (ball->mass*-9.81) + (-1*ball->friction*ball->velocity.y) + (200*(l-l0)*I.y))/ball->mass;
+    ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep));
 }
 
 void Ball_Render(Ball *ball, Scene *scene)
