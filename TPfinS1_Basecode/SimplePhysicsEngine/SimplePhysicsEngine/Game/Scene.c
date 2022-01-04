@@ -178,12 +178,25 @@ Ball *Scene_GetBalls(Scene *scene)
 
 BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
 {
-    //int ballCount = Scene_GetBallCount(scene);
-    //Ball *balls = Scene_GetBalls(scene);
+    int ballCount = Scene_GetBallCount(scene);
+    Ball *balls = Scene_GetBalls(scene);
     BallQuery query = { 0 };
 
-    // TODO - Complétez la fonction
-
+		if(ballCount==0)
+			query.ball=NULL;
+		else
+		{
+			query.distance = Vec2_Distance(position,balls[0].position);
+			query.ball = &balls[0];
+		}
+    for(int i=1;i<ballCount;i++)
+    {
+    	if(Vec2_Distance(position,balls[i].position)<query.distance)
+    	{	
+    		query.distance = Vec2_Distance(position,balls[i].position);
+    		query.ball = &balls[i];
+    	}
+	  }
     return query;
 }
 
