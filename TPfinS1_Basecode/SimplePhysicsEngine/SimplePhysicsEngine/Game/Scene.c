@@ -206,6 +206,7 @@ int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int q
     //Ball *balls = Scene_GetBalls(scene);
 
     // TODO - Complétez la fonction
+	//Créez un tableau à n élements, parcourir le tableau des balles, remplir le tableau par ordre croissant, si valeur plus petite ajouter puis trier tableau
 
     return EXIT_SUCCESS;
 }
