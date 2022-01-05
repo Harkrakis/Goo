@@ -83,10 +83,12 @@ void Ball_UpdateVelocity(Ball *ball, float timeStep)
     int j;
     for(j=0;j<ball->springCount;j++)
     { 
+		Spring *spring=&(ball->springs[j]);
 		I=Vec2_Normalize( Vec2_Sub ( ball->springs[j].other->position, ball->position ));
-    	F.x += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.x;
-    	F.y += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.y;
+    	F=Vec2_Add(F,Vec2_Scale(I,200*( (Vec2_Distance(spring->other->position,ball->position)) - (spring->length))));
     }
+
+    
     acc=Vec2_Scale( Vec2_Add( Vec2_Add( Vec2_Scale(g, ball->mass), Vec2_Scale(ball->velocity, -1*ball->friction) ),F), 1./ball->mass);
     ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep)); 
 }
