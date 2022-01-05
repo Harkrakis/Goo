@@ -178,26 +178,37 @@ Ball *Scene_GetBalls(Scene *scene)
 
 BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
 {
-    int ballCount = Scene_GetBallCount(scene),ID;
+    int ballCount = Scene_GetBallCount(scene);
     Ball *balls = Scene_GetBalls(scene);
-    BallQuery query = { 0 };
-
+    for(int j=0;j<queryCount;j++)
+    {
 		if(ballCount==0)
-			query.ball=NULL;
+				queries[j].ball=NULL;
 		else
 		{
-			query.distance = Vec2_Distance(position,balls[0].position);
-			query.ball = &balls[0];
-    for(int i=1;i<ballCount;i++)
-    {
-    	if(Vec2_Distance(position,balls[i].position)<query.distance)
-    	{	
-    		query.distance = Vec2_Distance(position,balls[i].position);
-    		query.ball = &balls[i];
-    	}
-	  }
-	  }
-    return query;
+			queries[j].distance = Vec2_Distance(position,balls[0].position);
+			queries[j].ball = &balls[j];
+ 	    	for(int i=1;i<ballCount;i++)
+ 	    	{
+    			if(Vec2_Distance(position,balls[i].position)<queries[j].distance)
+  	  			{		
+  	  				if(j==0)
+  	  				{
+   	 				queries[j].distance = Vec2_Distance(position,balls[i].position);
+   	 				queries[j].ball = &balls[i];
+   	 				}
+   	 				else if(Vec2_Distance(position,balls[i].position)>queries[j-1].distance)
+   	 				{
+   	 				queries[j].distance = Vec2_Distance(position,balls[i].position);
+   	 				queries[j].ball = &balls[i];
+   	 				}
+   	 			}
+    		}
+	    }
+	    ballCount--;
+	 	}
+
+    return EXIT_SUCCESS;
 }
 
 int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
