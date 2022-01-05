@@ -254,11 +254,14 @@ void Scene_UpdateGame(Scene *scene)
         return;
     }
 
-		if(input->mouseLPressed==true)
+		if(input->mouseLPressed==true)																									
 		{
+
+				query = Scene_GetNearestBall(scene,Scene_GetMousePosition(scene));
 				Ball *ball4 = Scene_CreateBall(scene, Scene_GetMousePosition(scene));
-				query = Scene_GetNearestBall(scene,ball4->position);
-				Ball_Connect(query.ball, ball4, 1.5f);
+				if(query.distance<3.0f)
+					Ball_Connect(query.ball, ball4, 1.5f);
+				return;
 		}
     // Ajoutez ou supprimez des balles en fonction des actions du joueur
 }
