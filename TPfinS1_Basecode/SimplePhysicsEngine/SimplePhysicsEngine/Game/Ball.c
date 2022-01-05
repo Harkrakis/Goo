@@ -78,17 +78,16 @@ Vec2 Ball_GetPosition(Ball *ball)
 
 void Ball_UpdateVelocity(Ball *ball, float timeStep)
 {
-    Vec2 acc,I;
-    float l,Fx=0,Fy=0;
+    Vec2 acc,I,F={0,0},g={0,-9.81};
+    float l;
     int j;
     for(j=0;j<ball->springCount;j++)
     { 
-		I=Vec2_Normalize( Vec2_Sub ( ball->springs[j].other->position, ball->position ));    
-    	Fx += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.x;
-    	Fy += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.y;
+		I=Vec2_Normalize( Vec2_Sub ( ball->springs[j].other->position, ball->position ));
+    	F.x += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.x;
+    	F.y += 200*( (Vec2_Distance(ball->springs[j].other->position,ball->position)) - (ball->springs[j].length))*I.y;
     }
-    acc.x=( (-1*ball->friction*ball->velocity.x) + Fx)/ball->mass;
-    acc.y=( (ball->mass*-9.81) + (-1*ball->friction*ball->velocity.y) + Fy)/ball->mass;
+    acc=Vec2_Scale( Vec2_Add( Vec2_Add( Vec2_Scale(g, ball->mass), Vec2_Scale(ball->velocity, -1*ball->friction) ),F), 1./ball->mass);
     ball->velocity=Vec2_Add(ball->velocity,Vec2_Scale(acc, timeStep)); 
 }
 
