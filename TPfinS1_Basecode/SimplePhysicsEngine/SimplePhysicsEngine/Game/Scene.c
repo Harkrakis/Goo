@@ -228,9 +228,13 @@ int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int q
    	 				}
    	 			}
     		}
+    		if(queries[j].distance<2.0)
+    		{
+    			scene->m_validCount++;
+    		}
 	    }
 	    ballCount--;
-	 	}
+	 }
 
     return EXIT_SUCCESS;
 }
@@ -252,12 +256,13 @@ void Scene_FixedUpdate(Scene *scene, float timeStep)
 
 void Scene_UpdateGame(Scene *scene)
 {
-		BallQuery query;
+	int ballCount = Scene_GetBallCount(scene);
     Input *input = Scene_GetInput(scene);
     Camera *camera = Scene_GetCamera(scene);
-
     // Initialise les requêtes
     scene->m_validCount = 0;
+    scene->m_query
+
 
     // Calcule la position de la souris et son déplacement
     Vec2 mousePos = Vec2_Set(0.0f, 0.0f);
@@ -271,6 +276,11 @@ void Scene_UpdateGame(Scene *scene)
     );
     mouseDelta = Vec2_Sub(mouseDelta, mousePos);
     scene->m_mousePos = mousePos;
+    
+    
+	Scene_GetNearestBalls(scene,Scene_GetMousePosition(scene),scene->m_queries,3);
+	
+	
 
     // Déplacement de la caméra
     if (input->mouseRDown)
@@ -278,20 +288,33 @@ void Scene_UpdateGame(Scene *scene)
         Camera_Move(camera, Vec2_Scale(mouseDelta, -1.f));
         return;
     }
-
-		if(input->mouseLPressed==true)																									
-		{
-			BallQuery queries[3];
-			Scene_GetNearestBalls(scene,Scene_GetMousePosition(scene),queries,3);
-			Ball *ball4 = Scene_CreateBall(scene, Scene_GetMousePosition(scene));
-			for(int i=0;i<3;i++)
+	
+	if(input->mouseLPressed==true)																									
+	{
+		BallQuery Nearest_Ball=Scene_GetNearestBall(scene,Scene_GetMousePosition(scene));    		 
+		
+		if((Nearest_Ball.distance<0.2f)&&(ballCount!=0))
 			{
-				if(queries[i].distance<2.0f)
-				Ball_Connect(queries[i].ball, ball4, 1.5f);
+				Scene_RemoveBall(scene,Nearest_Ball.ball);
 			}
-			return;
-		}
-    // Ajoutez ou supprimez des balles en fonction des actions du joueur
+		else
+		{
+			Ball *ball4 = Scene_CreateBall(scene, Scene_GetMousePosition(scene));
+			{
+			if(ballCount!=0)
+			{
+				for(int i=0;i<3;i++)
+				{
+					if((scene->m_queries[i].ball!=NULL)&&(scene->m_queries[i].distance<2.0f))
+					Ball_Connect(scene->m_queries[i].ball, ball4, 1.5f);
+				}
+			}
+
+			}
+		
+	   	}
+	}
+	
 }
 
 void Scene_Update(Scene *scene)
