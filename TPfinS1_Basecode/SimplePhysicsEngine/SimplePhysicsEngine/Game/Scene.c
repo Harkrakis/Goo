@@ -202,10 +202,39 @@ BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
 
 int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
 {
-    //int ballCount = Scene_GetBallCount(scene);
-    //Ball *balls = Scene_GetBalls(scene);
-
-    // TODO - Complétez la fonction
+    int ballCount = Scene_GetBallCount(scene);
+    Ball *balls = Scene_GetBalls(scene);
+    for(int j=0;j<queryCount;j++)
+    {
+		if(ballCount==0)
+				queries[j].ball=NULL;
+		else
+		{
+			queries[j].distance = Vec2_Distance(position,balls[0].position);
+			queries[j].ball = &balls[j];
+ 	    	for(int i=1;i<ballCount;i++)
+ 	    	{
+    			if(Vec2_Distance(position,balls[i].position)<queries[j].distance)
+  	  			{	
+  	  			bool ver;
+  	  			for(int k=0;k<queryCount;k++)
+  	  			{
+  	  				ver=true;
+  	  				if(&queries[j]==&queries[k])
+  	  				{
+  	  					ver = false;
+  	  				}
+  	  			}
+  	  			if(ver==true)
+  	  			{		
+   	 				queries[j].distance = Vec2_Distance(position,balls[i].position);
+   	 				queries[j].ball = &balls[i];
+   	 			}
+    		}
+	    }
+	    ballCount--;
+	 	}
+	}
 
     return EXIT_SUCCESS;
 }
@@ -256,12 +285,15 @@ void Scene_UpdateGame(Scene *scene)
 
 		if(input->mouseLPressed==true)																									
 		{
-
-				query = Scene_GetNearestBall(scene,Scene_GetMousePosition(scene));
-				Ball *ball4 = Scene_CreateBall(scene, Scene_GetMousePosition(scene));
-				if(query.distance<3.0f)
-					Ball_Connect(query.ball, ball4, 1.5f);
-				return;
+			BallQuery queries[3];
+			Scene_GetNearestBalls(scene,Scene_GetMousePosition(scene),queries,3);
+			Ball *ball4 = Scene_CreateBall(scene, Scene_GetMousePosition(scene));
+			for(int i=0;i<3;i++)
+			{
+				if(queries[i].distance<2.0f)
+				Ball_Connect(queries[i].ball, ball4, 1.5f);
+			}
+			return;
 		}
     // Ajoutez ou supprimez des balles en fonction des actions du joueur
 }
