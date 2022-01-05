@@ -228,7 +228,7 @@ int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int q
    	 				}
    	 			}
     		}
-    		if(queries[j].distance<2.0)
+    		if((queries[j].distance<2.0)&&(queries[j].distance>0.2))
     		{
     			scene->m_validCount++;
     		}
@@ -261,7 +261,7 @@ void Scene_UpdateGame(Scene *scene)
     Camera *camera = Scene_GetCamera(scene);
     // Initialise les requêtes
     scene->m_validCount = 0;
-    scene->m_query
+    memset(scene->m_queries,0,4*sizeof(BallQuery));
 
 
     // Calcule la position de la souris et son déplacement
