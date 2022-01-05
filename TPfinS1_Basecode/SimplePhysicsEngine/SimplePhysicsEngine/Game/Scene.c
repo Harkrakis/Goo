@@ -218,13 +218,13 @@ int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int q
   	  			{		
   	  				if(j==0)
   	  				{
-   	 				queries[j].distance = Vec2_Distance(position,balls[i].position);
-   	 				queries[j].ball = &balls[i];
+   	 					queries[j].distance = Vec2_Distance(position,balls[i].position);
+   	 					queries[j].ball = &balls[i];
    	 				}
    	 				else if(Vec2_Distance(position,balls[i].position)>queries[j-1].distance)
    	 				{
-   	 				queries[j].distance = Vec2_Distance(position,balls[i].position);
-   	 				queries[j].ball = &balls[i];
+   	 					queries[j].distance = Vec2_Distance(position,balls[i].position);
+   	 					queries[j].ball = &balls[i];
    	 				}
    	 			}
     		}
