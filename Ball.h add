@@ -1,0 +1,15 @@
+typedef struct Mode_Jeu_s
+{
+
+    /// vecteur gravité
+		Vec2 grav;
+
+    /// force rappel ressort
+    float K;
+    
+    ///masse de l'objet
+    float masse;
+    
+} Mode_Jeu;
+
+///ajoute a ton ball .h il faut mtn metre modemod(); au debut du main et c bon
