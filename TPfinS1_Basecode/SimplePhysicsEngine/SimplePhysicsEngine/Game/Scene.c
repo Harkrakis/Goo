@@ -202,7 +202,9 @@ BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
 
 int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
 {
-    int ballCount = Scene_GetBallCount(scene);
+    int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
+{
+	int ballCount = Scene_GetBallCount(scene);
     Ball *balls = Scene_GetBalls(scene);
     for(int j=0;j<queryCount;j++)
     {
@@ -210,33 +212,31 @@ int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int q
 				queries[j].ball=NULL;
 		else
 		{
-			queries[j].distance = Vec2_Distance(position,balls[0].position);
-			queries[j].ball = &balls[j];
- 	    	for(int i=1;i<ballCount;i++)
- 	    	{
-    			if(Vec2_Distance(position,balls[i].position)<queries[j].distance)
-  	  			{		
-  	  				if(j==0)
-  	  				{
-   	 					queries[j].distance = Vec2_Distance(position,balls[i].position);
-   	 					queries[j].ball = &balls[i];
+			if(j==0)
+			{
+				queries[j]=Scene_GetNearestBall(scene,position);
+			}
+			else
+			{
+		    	queries[j].distance = 1000;
+				queries[j].ball = NULL;
+ 	    		for(int i=1;i<ballCount;i++)
+ 	    		{
+    				if(Vec2_Distance(position,balls[i].position)<queries[j].distance)
+  	  				{		
+   	 					if(Vec2_Distance(position,balls[i].position)>queries[j-1].distance)
+   	 					{
+   	 						queries[j].distance = Vec2_Distance(position,balls[i].position);
+   	 						queries[j].ball = &balls[i];
+   	 					}
    	 				}
-   	 				else if(Vec2_Distance(position,balls[i].position)>queries[j-1].distance)
-   	 				{
-   	 					queries[j].distance = Vec2_Distance(position,balls[i].position);
-   	 					queries[j].ball = &balls[i];
-   	 				}
-   	 			}
-    		}
-    		if((queries[j].distance<2.0)&&(queries[j].distance>0.2))
-    		{
-    			scene->m_validCount++;
-    		}
-	    }
-	    ballCount--;
+    			}	
+	    	}
+	    	ballCount--;
+	 	}
 	 }
 
-    return EXIT_SUCCESS;
+    	return EXIT_SUCCESS;
 }
 
 void Scene_FixedUpdate(Scene *scene, float timeStep)
@@ -278,7 +278,13 @@ void Scene_UpdateGame(Scene *scene)
     scene->m_mousePos = mousePos;
     
     
-	Scene_GetNearestBalls(scene,Scene_GetMousePosition(scene),scene->m_queries,3);
+    Scene_GetNearestBalls(scene,Scene_GetMousePosition(scene),scene->m_queries,3);
+    BallQuery *queries=scene->m_queries;
+    for(int i=0;i<3;i++)
+    {
+    if((queries[i].distance<2.0f)&&(queries[i].distance>0.2f))
+	scene->m_validCount ++;
+    }
 	
 	
 
