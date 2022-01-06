@@ -200,43 +200,53 @@ BallQuery Scene_GetNearestBall(Scene *scene, Vec2 position)
     return query;
 }
 
-int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
+void sortQueries(BallQuery *queries, int queryCount)
 {
-    int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
-{
-	int ballCount = Scene_GetBallCount(scene);
-    Ball *balls = Scene_GetBalls(scene);
-    for(int j=0;j<queryCount;j++)
-    {
-		if(ballCount==0)
-				queries[j].ball=NULL;
-		else
+	int e;
+	BallQuery tmp;
+	e=0;
+	
+	while(e<queryCount-1)
+	{
+		for(int i=1;i<queryCount;i++)
 		{
-			if(j==0)
+			if(queries[i-1].distance>queries[i].distance)
 			{
-				queries[j]=Scene_GetNearestBall(scene,position);
+				tmp=queries[i];
+				queries[i]=queries[i-1];
+				queries[i-1]=tmp;
+				e=0;
 			}
 			else
-			{
-		    	queries[j].distance = 1000;
-				queries[j].ball = NULL;
- 	    		for(int i=1;i<ballCount;i++)
- 	    		{
-    				if(Vec2_Distance(position,balls[i].position)<queries[j].distance)
-  	  				{		
-   	 					if(Vec2_Distance(position,balls[i].position)>queries[j-1].distance)
-   	 					{
-   	 						queries[j].distance = Vec2_Distance(position,balls[i].position);
-   	 						queries[j].ball = &balls[i];
-   	 					}
-   	 				}
-    			}	
-	    	}
-	    	ballCount--;
-	 	}
-	 }
+				e++;
+		}
+	}	
+}
 
-    	return EXIT_SUCCESS;
+int Scene_GetNearestBalls(Scene *scene, Vec2 position, BallQuery *queries, int queryCount)
+{
+	int ballCount = Scene_GetBallCount(scene);
+    Ball *balls = Scene_GetBalls(scene);	
+    
+	for(int i=0;i<queryCount;i++)
+	{
+		queries[i].ball=&balls[i];
+		queries[i].distance=Vec2_Distance(position,balls[i].position);
+	}
+	
+	sortQueries(queries,queryCount);	
+	
+	for(int i=queryCount;i<ballCount;i++)
+	{
+		if(Vec2_Distance(position,balls[i].position)<queries[queryCount-1].distance)
+			{
+				queries[queryCount-1].ball=&balls[i];
+				queries[queryCount-1].distance=Vec2_Distance(position,balls[i].position);
+				sortQueries(queries,queryCount);
+			}
+	}
+	
+	return EXIT_SUCCESS;
 }
 
 void Scene_FixedUpdate(Scene *scene, float timeStep)
