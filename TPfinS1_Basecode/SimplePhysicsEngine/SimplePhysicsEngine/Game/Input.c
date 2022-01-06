@@ -57,6 +57,9 @@ void Input_Update(Input *input)
             case SDL_SCANCODE_RETURN:
                 input->restartPressed = true;
                 break;
+            case SDL_SCANCODE_D:
+            	input->KeyDDown = true;
+            	break;
             default:
                 break;
             }
@@ -68,6 +71,9 @@ void Input_Update(Input *input)
 
             switch (evt.key.keysym.scancode)
             {
+            case SDL_SCANCODE_D:
+                input->KeyDDown = false;
+                break;
             default:
                 break;
             }
@@ -93,7 +99,7 @@ void Input_Update(Input *input)
                 break;
             }
             break;
-
+        
         case SDL_MOUSEBUTTONUP:
             switch (evt.button.button)
             {
