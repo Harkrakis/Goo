@@ -320,6 +320,15 @@ void Scene_UpdateGame(Scene *scene)
 		
 	   	}
 	}
+	if(input-> KeyDDown==true)
+	{
+		BallQuery Nearest_Ball=Scene_GetNearestBall(scene,Scene_GetMousePosition(scene));
+		if(Nearest_Ball.distance<0.5)
+		{
+			Nearest_Ball.ball->velocity= Vec2_Set(0.0f,0.0f);
+			Nearest_Ball.ball->position=Scene_GetMousePosition(scene);
+		}
+	}
 	
 }
 
